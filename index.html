@@ -29,7 +29,7 @@
       });
 
       const data = await res.json();
-      document.getElementById("output").innerHTML = data.result;
+      document.getElementById("output").innerHTML = data.result || "Error generating output";
     }
   </script>
 </body>
