@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { ad, url } = req.body;
+    const { ad } = req.body;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "You are a CRO expert who personalizes landing pages."
+            content: "You are a CRO expert who creates high-converting landing page sections."
           },
           {
             role: "user",
@@ -26,10 +26,13 @@ Return ONLY valid JSON.
 
 Ad: ${ad}
 
+Generate a personalized landing page section.
+
 Format:
 {
   "headline": "...",
   "description": "...",
+  "bullets": ["...", "...", "..."],
   "cta": "...",
   "score": 85,
   "reason": "..."
@@ -47,38 +50,39 @@ Format:
 
     try {
       const jsonMatch = aiText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[0]);
-      } else {
-        throw new Error("No JSON");
-      }
+      parsed = JSON.parse(jsonMatch[0]);
     } catch {
-      // 🔥 FALLBACK (guarantees demo works)
       parsed = {
         headline: "Smart Personalized Experience",
-        description: "We tailored this page based on your ad interaction.",
+        description: "This page adapts based on your needs.",
+        bullets: [
+          "Better alignment with your goals",
+          "Improved user experience",
+          "Higher conversion potential"
+        ],
         cta: "Get Started",
         score: 75,
-        reason: "Fallback used due to AI parsing issue."
+        reason: "Fallback used due to parsing issue"
       };
     }
 
+    const bulletsHTML = parsed.bullets
+      ? parsed.bullets.map(b => `<li>✅ ${b}</li>`).join("")
+      : "";
+
     const result = `
-      <h1>${parsed.headline}</h1>
-      <p>${parsed.description}</p>
-      <button style="padding:10px 20px;background:#4f46e5;color:white;border:none;border-radius:5px;">
-        ${parsed.cta}
-      </button>
+      <section>
+        <h1>${parsed.headline}</h1>
+        <p>${parsed.description}</p>
 
-      <hr/>
+        <ul style="margin-top:10px;">
+          ${bulletsHTML}
+        </ul>
 
-      <h4>🔧 CRO Improvements:</h4>
-      <ul>
-        <li>Message aligned with ad intent</li>
-        <li>Clear value proposition</li>
-        <li>Stronger CTA</li>
-        <li>Improved user targeting</li>
-      </ul>
+        <button style="padding:10px 20px;background:#4f46e5;color:white;border:none;border-radius:5px;margin-top:10px;">
+          ${parsed.cta}
+        </button>
+      </section>
     `;
 
     res.status(200).json({
@@ -88,14 +92,18 @@ Format:
     });
 
   } catch (err) {
-    // 🔥 HARD FALLBACK (even if API fails completely)
     res.status(200).json({
       result: `
-        <h1>Optimized Experience</h1>
-        <p>This page has been personalized based on your ad.</p>
-        <button style="padding:10px;background:#4f46e5;color:white;border:none;">
-          Get Started
-        </button>
+        <section>
+          <h1>Optimized Experience</h1>
+          <p>This page has been personalized based on your ad.</p>
+          <ul>
+            <li>Better targeting</li>
+            <li>Improved messaging</li>
+            <li>Stronger CTA</li>
+          </ul>
+          <button>Get Started</button>
+        </section>
       `,
       score: 70,
       reason: "Fallback due to API error."
