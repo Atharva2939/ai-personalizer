@@ -5,46 +5,56 @@ export default function handler(req, res) {
 
   const { ad, url } = req.body;
 
-  // Simple AI-like logic
-  let headline = "Welcome to our platform";
-  let cta = "Get Started";
-  let description = "Experience something amazing.";
+  let headline, cta, description, score, reason;
 
-  if (ad.toLowerCase().includes("productivity")) {
+  const text = ad.toLowerCase();
+
+  if (text.includes("productivity")) {
     headline = "Boost Your Productivity with an All-in-One Workspace";
-    cta = "Start Organizing Now";
-    description = "Manage tasks, docs, and teams seamlessly in one place.";
-  }
-
-  if (ad.toLowerCase().includes("design")) {
+    description = "Manage tasks, docs, and teams seamlessly.";
+    cta = "Start Organizing";
+    score = 85;
+    reason = "Strong alignment between ad intent and landing messaging.";
+  } 
+  else if (text.includes("design")) {
     headline = "Create Stunning Designs in Minutes";
+    description = "No skills needed. Drag, drop, and create.";
     cta = "Start Designing";
-    description = "No skills needed. Just drag, drop, and create.";
-  }
-
-  if (ad.toLowerCase().includes("discount")) {
-    headline = "Don’t Miss This Limited-Time Offer";
-    cta = "Shop Now";
+    score = 88;
+    reason = "Clear value proposition and strong visual intent.";
+  } 
+  else if (text.includes("discount")) {
+    headline = "Limited-Time Offer Just for You!";
     description = "Grab exclusive deals before they’re gone.";
+    cta = "Shop Now";
+    score = 82;
+    reason = "Good urgency but can improve trust signals.";
+  } 
+  else {
+    headline = "Welcome to a Better Experience";
+    description = "We help you achieve your goals faster.";
+    cta = "Get Started";
+    score = 70;
+    reason = "Generic messaging; personalization improves relevance.";
   }
 
   const result = `
     <h1>${headline}</h1>
     <p>${description}</p>
-    <button style="padding:10px 20px;background:black;color:white;border:none;">
+    <button style="padding:10px 20px;background:#4f46e5;color:white;border:none;border-radius:5px;">
       ${cta}
     </button>
 
     <hr/>
 
-    <h3>🔧 CRO Improvements Applied:</h3>
+    <h4>🔧 CRO Improvements:</h4>
     <ul>
-      <li>Message match with ad creative</li>
+      <li>Message match with ad</li>
       <li>Clear value proposition</li>
       <li>Stronger CTA</li>
-      <li>User intent alignment</li>
+      <li>Improved user intent alignment</li>
     </ul>
   `;
 
-  res.status(200).json({ result });
+  res.status(200).json({ result, score, reason });
 }
