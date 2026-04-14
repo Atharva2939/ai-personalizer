@@ -104,22 +104,22 @@ async function generate() {
   const data = await res.json();
 
   document.getElementById("output").innerHTML = `
-    <div class="card">
-      <h2>📊 Conversion Score: <span class="score">${data.score}/100</span></h2>
-      <p>${data.reason}</p>
-    </div>
+  <div class="card">
+    <h2>📊 Conversion Score: <span class="score">${data.score || "N/A"}/100</span></h2>
+    <p>${data.reason || "AI is generating insights..."}</p>
+  </div>
 
-    <div class="card">
-      <h2>✨ Personalized Landing Section</h2>
-      ${data.result}
-    </div>
+  <div class="card">
+    <h2>✨ Personalized Landing Section</h2>
+    ${data.result || "<p>Generating content...</p>"}
+  </div>
 
-    <div class="card">
-      <h3>🔗 Original Page</h3>
-      <a href="${url}" target="_blank">${url}</a>
-      <p style="color:gray;">(Preview may be blocked due to security policies)</p>
-    </div>
-  `;
+  <div class="card">
+    <h3>🔗 Original Page</h3>
+    <a href="${url}" target="_blank">${url}</a>
+    <p style="color:gray;">(Preview may be blocked due to security policies)</p>
+  </div>
+`;
 }
 </script>
 
