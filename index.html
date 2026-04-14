@@ -55,7 +55,7 @@
 
     .score {
       font-size: 28px;
-      color: green;
+      color: #16a34a;
       font-weight: bold;
     }
 
@@ -72,21 +72,34 @@
       background: white;
     }
 
-    /* BEFORE */
+    /* BEFORE (FIXED) */
     .before {
       border-left: 6px solid #ef4444;
-      background: #fef2f2;
+      background: #fee2e2;
       color: #7f1d1d;
     }
 
-    /* AFTER (FIXED VISIBILITY) */
+    .before h1 {
+      color: #7f1d1d;
+    }
+
+    .before p {
+      color: #991b1b;
+    }
+
+    .before button {
+      background: #ef4444;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* AFTER (FIXED) */
     .after {
       border-left: 6px solid #16a34a;
       background: #dcfce7;
       box-shadow: 0 8px 25px rgba(34,197,94,0.3);
     }
 
-    /* FIX TEXT COLORS */
     .after section {
       color: #064e3b;
     }
