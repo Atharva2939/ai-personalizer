@@ -4,92 +4,124 @@
   <title>AI CRO Personalizer</title>
   <style>
     body {
-      font-family: Arial;
-      margin: 40px;
-      background: #f7f7f7;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f8fafc, #eef2ff);
+      margin: 0;
+      padding: 40px;
     }
+
     h1 {
       text-align: center;
     }
+
     .container {
       max-width: 900px;
       margin: auto;
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
     }
+
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
+
     button {
-      padding: 10px 20px;
-      background: black;
+      padding: 12px 20px;
+      background: #4f46e5;
       color: white;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
+
+    button:hover {
+      background: #4338ca;
+    }
+
     .output {
       margin-top: 30px;
+      animation: fadeIn 0.5s ease-in;
     }
-    iframe {
-      width: 100%;
-      height: 300px;
-      border: 1px solid #ccc;
-      margin-bottom: 20px;
-    }
+
     .card {
       border: 1px solid #ddd;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 10px;
+      margin-top: 15px;
+      background: #fafafa;
+    }
+
+    .score {
+      font-size: 22px;
+      font-weight: bold;
+      color: green;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
     }
   </style>
 </head>
 
 <body>
-  <h1>🚀 AI CRO Personalizer</h1>
 
-  <div class="container">
-    <label>Ad Creative</label>
-    <input id="ad" placeholder="Paste ad text here" />
+<h1>🚀 AI CRO Personalizer</h1>
 
-    <label>Landing Page URL</label>
-    <input id="url" placeholder="https://example.com" />
+<div class="container">
 
-    <button onclick="generate()">Generate</button>
+  <label>Ad Creative</label>
+  <input id="ad" placeholder="Enter ad text" />
 
-    <div class="output" id="output"></div>
-  </div>
+  <label>Landing Page URL</label>
+  <input id="url" placeholder="https://example.com" />
 
-  <script>
-    async function generate() {
-      const ad = document.getElementById("ad").value;
-      const url = document.getElementById("url").value;
+  <button onclick="generate()">Generate</button>
 
-      document.getElementById("output").innerHTML = "⏳ Generating...";
+  <div class="output" id="output"></div>
 
-      const res = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ ad, url })
-      });
+</div>
 
-      const data = await res.json();
+<script>
+async function generate() {
+  const ad = document.getElementById("ad").value;
+  const url = document.getElementById("url").value;
 
-      document.getElementById("output").innerHTML = `
-        <h2>🔍 Before (Original Page)</h2>
-        <iframe src="${url}"></iframe>
+  document.getElementById("output").innerHTML = "⏳ Optimizing...";
 
-        <h2>✨ After (Personalized)</h2>
-        <div class="card">
-          ${data.result}
-        </div>
-      `;
-    }
-  </script>
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ ad, url })
+  });
+
+  const data = await res.json();
+
+  document.getElementById("output").innerHTML = `
+    <div class="card">
+      <h2>📊 Conversion Score: <span class="score">${data.score}/100</span></h2>
+      <p>${data.reason}</p>
+    </div>
+
+    <div class="card">
+      <h2>✨ Personalized Landing Section</h2>
+      ${data.result}
+    </div>
+
+    <div class="card">
+      <h3>🔗 Original Page</h3>
+      <a href="${url}" target="_blank">${url}</a>
+      <p style="color:gray;">(Preview may be blocked due to security policies)</p>
+    </div>
+  `;
+}
+</script>
+
 </body>
 </html>
