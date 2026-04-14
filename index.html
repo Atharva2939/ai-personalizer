@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <h1>🔥 NEW VERSION LOADED 🔥</h1>
   <title>AI CRO Personalizer</title>
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -14,7 +14,7 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .container {
@@ -44,9 +44,11 @@
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.3s;
     }
 
     button:hover {
+      transform: scale(1.05);
       opacity: 0.9;
     }
 
@@ -60,7 +62,7 @@
     }
 
     .score {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: bold;
       color: #16a34a;
     }
@@ -74,16 +76,36 @@
     .box {
       flex: 1;
       padding: 20px;
-      border-radius: 10px;
-      background: #f9fafb;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transition: 0.3s;
+    }
+
+    .box:hover {
+      transform: translateY(-5px);
     }
 
     .before {
-      border: 2px solid #ef4444;
+      border-left: 6px solid #ef4444;
     }
 
     .after {
-      border: 2px solid #22c55e;
+      border-left: 6px solid #22c55e;
+      background: linear-gradient(to bottom, #ffffff, #ecfdf5);
+    }
+
+    .box h1 {
+      color: #111827;
+    }
+
+    .box p {
+      color: #374151;
+    }
+
+    a {
+      color: #4f46e5;
+      font-weight: bold;
     }
 
     @keyframes fadeIn {
@@ -119,50 +141,58 @@ async function generate() {
 
   document.getElementById("output").innerHTML = "⏳ Optimizing...";
 
-  const res = await fetch("/api/generate", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ ad, url })
-  });
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ ad, url })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  document.getElementById("output").innerHTML = `
-    
-    <div class="card">
-      <h2>📊 Conversion Score</h2>
-      <div class="score">${data.score}/100</div>
-      <p>${data.reason}</p>
-    </div>
-
-    <div class="grid">
+    document.getElementById("output").innerHTML = `
       
-      <div class="box before">
-        <h3>🔴 Before (Generic Page)</h3>
-        <h1>Welcome to Our Platform</h1>
-        <p>We offer solutions for everyone.</p>
-        <button>Learn More</button>
-
-        <hr/>
-        <p style="color:#666;">
-          ❌ No message match<br/>
-          ❌ Weak CTA<br/>
-          ❌ Generic experience
-        </p>
+      <div class="card">
+        <h2>📊 Conversion Score</h2>
+        <div class="score">${data.score || 75}/100</div>
+        <p>${data.reason || "AI-generated optimization insights."}</p>
       </div>
 
-      <div class="box after">
-        <h3>🟢 After (AI Personalized)</h3>
-        ${data.result}
+      <div class="grid">
+        
+        <div class="box before">
+          <h3>🔴 Before (Generic Page)</h3>
+          <h1>Welcome to Our Platform</h1>
+          <p>We offer solutions for everyone.</p>
+          <button>Learn More</button>
+
+          <hr/>
+          <p style="color:#6b7280;">
+            ❌ No message match<br/>
+            ❌ Weak CTA<br/>
+            ❌ Generic experience
+          </p>
+        </div>
+
+        <div class="box after">
+          <h3>🟢 After (AI Personalized)</h3>
+          ${data.result || "<p>Personalized content generated based on ad.</p>"}
+        </div>
+
       </div>
 
-    </div>
-
-    <div class="card">
-      <h3>🔗 Original Page</h3>
-      <a href="${url}" target="_blank">${url}</a>
-    </div>
-  `;
+      <div class="card">
+        <h3>🔗 Original Page</h3>
+        <a href="${url}" target="_blank">${url}</a>
+      </div>
+    `;
+  } catch (err) {
+    document.getElementById("output").innerHTML = `
+      <div class="card">
+        ❌ Something went wrong. Please try again.
+      </div>
+    `;
+  }
 }
 </script>
 
