@@ -33,7 +33,6 @@
       margin: 10px 0;
       border-radius: 8px;
       border: none;
-      outline: none;
     }
 
     button {
@@ -43,13 +42,6 @@
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      opacity: 0.9;
     }
 
     .card {
@@ -58,13 +50,12 @@
       padding: 20px;
       border-radius: 12px;
       margin-top: 20px;
-      animation: fadeIn 0.6s ease-in;
     }
 
     .score {
       font-size: 28px;
+      color: green;
       font-weight: bold;
-      color: #16a34a;
     }
 
     .grid {
@@ -78,40 +69,24 @@
       padding: 20px;
       border-radius: 12px;
       background: white;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
-
-    .box:hover {
-      transform: translateY(-5px);
     }
 
     .before {
-      border-left: 6px solid #ef4444;
+      border-left: 6px solid red;
+      background: #fef2f2;
     }
 
     .after {
-      border-left: 6px solid #22c55e;
-      background: #f0fdf4; /* richer green */
-      box-shadow: 0 6px 25px rgba(34,197,94,0.25);
+      border-left: 6px solid green;
+      background: #f0fdf4;
     }
 
-    .box h1 {
-      color: #111827;
+    section ul {
+      padding-left: 20px;
     }
 
-    .box p {
-      color: #374151;
-    }
-
-    a {
-      color: #4f46e5;
-      font-weight: bold;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
+    section li {
+      margin: 5px 0;
     }
 
   </style>
@@ -142,58 +117,43 @@ async function generate() {
 
   document.getElementById("output").innerHTML = "⏳ Optimizing...";
 
-  try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ ad, url })
-    });
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ ad, url })
+  });
 
-    const data = await res.json();
+  const data = await res.json();
 
-    document.getElementById("output").innerHTML = `
+  document.getElementById("output").innerHTML = `
+    
+    <div class="card">
+      <h2>📊 Conversion Score</h2>
+      <div class="score">${data.score}/100</div>
+      <p>${data.reason}</p>
+    </div>
+
+    <div class="grid">
       
-      <div class="card">
-        <h2>📊 Conversion Score</h2>
-        <div class="score">${data.score || 75}/100</div>
-        <p>${data.reason || "AI-generated optimization insights."}</p>
+      <div class="box before">
+        <h3>🔴 Before</h3>
+        <h1>Welcome to Our Platform</h1>
+        <p>We offer solutions for everyone.</p>
+        <button>Learn More</button>
       </div>
 
-      <div class="grid">
-        
-        <div class="box before">
-          <h3>🔴 Before (Generic Page)</h3>
-          <h1>Welcome to Our Platform</h1>
-          <p>We offer solutions for everyone.</p>
-          <button>Learn More</button>
-
-          <hr/>
-          <p style="color:#6b7280;">
-            ❌ No message match<br/>
-            ❌ Weak CTA<br/>
-            ❌ Generic experience
-          </p>
-        </div>
-
-        <div class="box after">
-          <h3>🟢 After (AI Personalized)</h3>
-          ${data.result || "<p>Personalized content generated based on ad.</p>"}
-        </div>
-
+      <div class="box after">
+        <h3>🟢 After (AI Personalized)</h3>
+        ${data.result}
       </div>
 
-      <div class="card">
-        <h3>🔗 Original Page</h3>
-        <a href="${url}" target="_blank">${url}</a>
-      </div>
-    `;
-  } catch (err) {
-    document.getElementById("output").innerHTML = `
-      <div class="card">
-        ❌ Something went wrong. Please try again.
-      </div>
-    `;
-  }
+    </div>
+
+    <div class="card">
+      <h3>🔗 Original Page</h3>
+      <a href="${url}" target="_blank">${url}</a>
+    </div>
+  `;
 }
 </script>
 
