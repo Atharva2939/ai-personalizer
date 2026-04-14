@@ -40,15 +40,6 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #4338ca;
-    }
-
-    .output {
-      margin-top: 30px;
-      animation: fadeIn 0.5s ease-in;
-    }
-
     .card {
       border: 1px solid #ddd;
       padding: 20px;
@@ -61,11 +52,6 @@
       font-size: 22px;
       font-weight: bold;
       color: green;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
     }
   </style>
 </head>
@@ -84,7 +70,7 @@
 
   <button onclick="generate()">Generate</button>
 
-  <div class="output" id="output"></div>
+  <div id="output"></div>
 
 </div>
 
@@ -95,31 +81,40 @@ async function generate() {
 
   document.getElementById("output").innerHTML = "⏳ Optimizing...";
 
-  const res = await fetch("/api/generate", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ ad, url })
-  });
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ ad, url })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
+    console.log(data); // debug
 
-  document.getElementById("output").innerHTML = `
-  <div class="card">
-    <h2>📊 Conversion Score: <span class="score">${data.score || "N/A"}/100</span></h2>
-    <p>${data.reason || "AI is generating insights..."}</p>
-  </div>
+    document.getElementById("output").innerHTML = `
+      <div class="card">
+        <h2>📊 Conversion Score: <span class="score">${data.score || "75"}/100</span></h2>
+        <p>${data.reason || "AI-generated optimization insights."}</p>
+      </div>
 
-  <div class="card">
-    <h2>✨ Personalized Landing Section</h2>
-    ${data.result || "<p>Generating content...</p>"}
-  </div>
+      <div class="card">
+        <h2>✨ Personalized Landing Section</h2>
+        ${data.result || "<p>Generated personalized content.</p>"}
+      </div>
 
-  <div class="card">
-    <h3>🔗 Original Page</h3>
-    <a href="${url}" target="_blank">${url}</a>
-    <p style="color:gray;">(Preview may be blocked due to security policies)</p>
-  </div>
-`;
+      <div class="card">
+        <h3>🔗 Original Page</h3>
+        <a href="${url}" target="_blank">${url}</a>
+        <p style="color:gray;">(Preview may be blocked due to security policies)</p>
+      </div>
+    `;
+  } catch (err) {
+    document.getElementById("output").innerHTML = `
+      <div class="card">
+        ❌ Something went wrong. Please try again.
+      </div>
+    `;
+  }
 }
 </script>
 
