@@ -4,55 +4,92 @@
   <title>AI CRO Personalizer</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #f8fafc, #eef2ff);
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       margin: 0;
       padding: 40px;
+      color: white;
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 30px;
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
-      background: white;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(15px);
       padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     }
 
     input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      border-radius: 8px;
+      border: none;
+      outline: none;
     }
 
     button {
       padding: 12px 20px;
-      background: #4f46e5;
+      background: #ff7a18;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.9;
     }
 
     .card {
-      border: 1px solid #ddd;
+      background: white;
+      color: black;
       padding: 20px;
-      border-radius: 10px;
-      margin-top: 15px;
-      background: #fafafa;
+      border-radius: 12px;
+      margin-top: 20px;
+      animation: fadeIn 0.6s ease-in;
     }
 
     .score {
-      font-size: 22px;
+      font-size: 26px;
       font-weight: bold;
-      color: green;
+      color: #16a34a;
     }
+
+    .grid {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .box {
+      flex: 1;
+      padding: 20px;
+      border-radius: 10px;
+      background: #f9fafb;
+    }
+
+    .before {
+      border: 2px solid #ef4444;
+    }
+
+    .after {
+      border: 2px solid #22c55e;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
   </style>
 </head>
 
@@ -63,12 +100,12 @@
 <div class="container">
 
   <label>Ad Creative</label>
-  <input id="ad" placeholder="Enter ad text" />
+  <input id="ad" placeholder="Enter ad text..." />
 
   <label>Landing Page URL</label>
   <input id="url" placeholder="https://example.com" />
 
-  <button onclick="generate()">Generate</button>
+  <button onclick="generate()">Generate Optimization</button>
 
   <div id="output"></div>
 
@@ -81,40 +118,50 @@ async function generate() {
 
   document.getElementById("output").innerHTML = "⏳ Optimizing...";
 
-  try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ ad, url })
-    });
+  const res = await fetch("/api/generate", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ ad, url })
+  });
 
-    const data = await res.json();
-    console.log(data); // debug
+  const data = await res.json();
 
-    document.getElementById("output").innerHTML = `
-      <div class="card">
-        <h2>📊 Conversion Score: <span class="score">${data.score || "75"}/100</span></h2>
-        <p>${data.reason || "AI-generated optimization insights."}</p>
+  document.getElementById("output").innerHTML = `
+    
+    <div class="card">
+      <h2>📊 Conversion Score</h2>
+      <div class="score">${data.score}/100</div>
+      <p>${data.reason}</p>
+    </div>
+
+    <div class="grid">
+      
+      <div class="box before">
+        <h3>🔴 Before (Generic Page)</h3>
+        <h1>Welcome to Our Platform</h1>
+        <p>We offer solutions for everyone.</p>
+        <button>Learn More</button>
+
+        <hr/>
+        <p style="color:#666;">
+          ❌ No message match<br/>
+          ❌ Weak CTA<br/>
+          ❌ Generic experience
+        </p>
       </div>
 
-      <div class="card">
-        <h2>✨ Personalized Landing Section</h2>
-        ${data.result || "<p>Generated personalized content.</p>"}
+      <div class="box after">
+        <h3>🟢 After (AI Personalized)</h3>
+        ${data.result}
       </div>
 
-      <div class="card">
-        <h3>🔗 Original Page</h3>
-        <a href="${url}" target="_blank">${url}</a>
-        <p style="color:gray;">(Preview may be blocked due to security policies)</p>
-      </div>
-    `;
-  } catch (err) {
-    document.getElementById("output").innerHTML = `
-      <div class="card">
-        ❌ Something went wrong. Please try again.
-      </div>
-    `;
-  }
+    </div>
+
+    <div class="card">
+      <h3>🔗 Original Page</h3>
+      <a href="${url}" target="_blank">${url}</a>
+    </div>
+  `;
 }
 </script>
 
